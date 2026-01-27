@@ -64,7 +64,9 @@ class MatrixLieGroup(abc.ABC):
 
     def __getitem__(self, key) -> Self:
         """Allow batch axes slicing using [] indexing operator."""
-        assert key[-1] == slice(None), "ensure that the parameter dimension is included"
+        if isinstance(key, int):
+            key = (key,)
+        assert len(key) < len(self.shape) or key[-1] == slice(None), "ensure that the parameter dimension is included"
         kwargs = {f.name: self.__dict__[f.name][key] for f in jdc.fields(self)}
         return self.__class__(**kwargs)
 
